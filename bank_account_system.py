@@ -1,55 +1,64 @@
 """Bank account management module."""
 import hashlib
+import json
 import os
 import secrets
-import sys
+
+SERVICE_FEE = 2.50
 
 account_data = {}
 
-def createAccount(acc_id, name, initial_deposit=0, transactions=[]):
+def create_account(acc_id, name, initial_deposit=0, transactions=None):
+    """Create an account; return False if the id already exists."""
+    if transactions is None:
+        transactions = []
     if acc_id in account_data:
         return False
     account_data[acc_id] = {"name": name, "balance": initial_deposit}
-    transactions.append("Created %s with initial balance %d" % (acc_id, initial_deposit))
+    transactions.append(f"Created {acc_id} with initial balance {initial_deposit}")
     return True
 
 def deposit(acc_id, amount):
-    if acc_id not in account_data:
+    """Add a positive amount to an account; return True on success."""
+    if acc_id not in account_data or amount <= 0:
         return False
     account_data[acc_id]["balance"] += amount
     return True
 
 def withdraw(acc_id, amount):
-    service_fee = 2.50
-    if account_data.get(acc_id) == None:
+    """Withdraw amount plus the service fee; return True on success."""
+    if acc_id not in account_data or amount <= 0:
         return False
-    if account_data[acc_id]["balance"] < amount:
+    total = amount + SERVICE_FEE
+    if account_data[acc_id]["balance"] < total:
         return False
-    else:
-        account_data[acc_id]["balance"] -= amount
-        return True
+    account_data[acc_id]["balance"] -= total
+    return True
 
 def compute_bonus(acc_id, rate):
-    bal = account_data[acc_id]["balance"]
-    return bal * rate
+    """Return the promotional bonus: balance multiplied by rate."""
+    return account_data[acc_id]["balance"] * rate
 
 def get_hash(pin, salt=None):
+    """Return 'salt$hash' for a PIN using salted PBKDF2-SHA256."""
     salt = salt or os.urandom(16)
     digest = hashlib.pbkdf2_hmac("sha256", pin.encode(), salt, 200_000)
     return salt.hex() + "$" + digest.hex()
 
 def generate_temp_pin():
+    """Return a cryptographically secure 4-digit temporary PIN."""
     return secrets.randbelow(9000) + 1000
 
 def backup_data(filename="backup.txt"):
-    f = open(filename, "w")
-    f.write(str(account_data))
-    f.close()
+    """Write all account data to a JSON file."""
+    with open(filename, "w", encoding="utf-8") as file:
+        json.dump(account_data, file)
     print("Backup complete:", filename)
 
 def main():
+    """Run a small demonstration of the banking functions."""
     admin_token = os.environ.get("BANK_ADMIN_TOKEN")
-    createAccount("A01", "Alice", 1000)
+    create_account("A01", "Alice", 1000)
     deposit("A01", 500)
     withdraw("A01", 200)
     print("Bonus:", compute_bonus("A01", 0.05))
@@ -58,4 +67,5 @@ def main():
     backup_data()
     print("Token initialized:", admin_token is not None)
 
-main()
+if __name__ == "__main__":
+    main()
