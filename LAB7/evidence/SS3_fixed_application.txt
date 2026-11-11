@@ -1,0 +1,8 @@
+==== Running normalize_registration ====
+Enter a registration number (e.g. ka 01 ab 1234): Normalized registration: KA01AB1234
+
+==== Running total_claim_amount ====
+Enter past claim amounts separated by ; (e.g. 12000;4500;800): Total claimed: None
+
+==== Running driver_age ====
+Enter the driver's date of birth as DD/MM/YYYY (e.g. 14/08/1999): Driver age in 2026: 27

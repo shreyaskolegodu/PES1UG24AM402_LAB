@@ -1,0 +1,17 @@
+==== Running normalize_registration ====
+Enter a registration number (e.g. ka 01 ab 1234): Normalized registration: KA01AB1234
+
+==== Running total_claim_amount ====
+Enter past claim amounts separated by ; (e.g. 12000;4500;800): Traceback (most recent call last):
+  File "/Users/shreyaskm/Documents/SE/lab-deliverables/LAB7/car_insurance_premium_parser.py", line 39, in <module>
+    main()
+    ~~~~^^
+  File "/Users/shreyaskm/Documents/SE/lab-deliverables/LAB7/car_insurance_premium_parser.py", line 32, in main
+    print("Total claimed:", total_claim_amount(value))
+                            ~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/shreyaskm/Documents/SE/lab-deliverables/LAB7/car_insurance_premium_parser.py", line 16, in total_claim_amount
+    return sum(int(amount) for amount in text.split(';'))
+  File "/Users/shreyaskm/Documents/SE/lab-deliverables/LAB7/car_insurance_premium_parser.py", line 16, in <genexpr>
+    return sum(int(amount) for amount in text.split(';'))
+               ~~~^^^^^^^^
+ValueError: invalid literal for int() with base 10: ''
